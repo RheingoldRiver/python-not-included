@@ -24,37 +24,24 @@ class TemplateModifier(TemplateModifierBase):
             template.remove('amount')
 
         if template.has('material1'):
-            self.update_materials(template)
+            self.update_param(template, 'material')
         if template.has('amount1'):
-            self.update_amounts(template)
+            self.update_param(template, 'amount')
 
-    def update_materials(self, template: Template):
-        materials = []
+    def update_param(self, template, kind):
+        plural = kind + 's'
+        items = []
         i = 1
         # make sure that `materials` is ordered correctly
         # because we will delete all of the previous params as we go
-        template.add('materials', '', before='material1')
-        while template.has('material' + str(i)):
-            material = template.get('material' + str(i)).value.strip()
-            materials.append(material)
-            template.remove('material' + str(i))
+        template.add(plural, '', before=kind + '1')
+        while template.has(kind+ str(i)):
+            value = template.get(kind + str(i)).value.strip()
+            items.append(value)
+            template.remove(kind + str(i))
             i += 1
-        materials = ', '.join(materials)
-        template.add('materials', materials)
-
-    def update_amounts(self, template: Template):
-        amounts = []
-        i = 1
-        # make sure that `amounts` is ordered correctly
-        # because we will delete all of the previous params as we go
-        template.add('amounts', '', before='amount1')
-        while template.has('amount' + str(i)):
-            amount = template.get('amount' + str(i)).value.strip()
-            amounts.append(amount)
-            template.remove('amount' + str(i))
-            i += 1
-        amounts = ', '.join(amounts)
-        template.add('amounts', amounts)
+        text = ', '.join(items)
+        template.add(plural, text)
 
 
 TemplateModifier(site, 'Infobox Building',
